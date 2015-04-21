@@ -12,7 +12,7 @@ __email__ = "msbrown@davidson.edu, jaspell@davidson.edu"
 
 def main():
 
-	
+	infile = "/Desktop/Images/DepthData/img_0000.yml"
 
 
 if __name__ == "__main__":
