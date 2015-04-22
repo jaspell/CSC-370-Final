@@ -5,7 +5,7 @@
 __author__ = "Micah Brown and Jackson Spell"
 __email__ = "msbrown@davidson.edu, jaspell@davidson.edu"
 
-class Depth_Image(Image):
+class DepthImage(Image):
 	"""
 	A depth image.
 	"""
