@@ -12,7 +12,7 @@ class ColorImage:
 	Color image object.
 	"""
 
-	def __init__(self, image_file=None, w=None, h=None):
+	def __init__(self, image_file=None, width=None, height=None):
 		"""
 		Image Constructor.
 
@@ -31,8 +31,8 @@ class ColorImage:
 			self.width, self.height, self.image = self.read_image(image_file)
 
 		else:
-			self.width = w
-			self.height = h
+			self.width = width
+			self.height = height
 
 			self.image = [[0 for j in range(3*self.width)] for i in range(self.height)]
 
