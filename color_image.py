@@ -2,8 +2,6 @@
 
 """Color image object for Final Project (Depth Image segmentation)."""
 
-import pixel
-
 import png
 
 __author__ = "Micah Brown and Jackson Spell"
@@ -77,10 +75,8 @@ class ColorImage:
 			None
 		"""
 
-		output = []
-
 		# Write output to file.
 		with open(filename, 'wb') as outf:
 			writer = png.Writer(self.width, self.height)
-			writer.write(outf, output)
+			writer.write(outf, self.image)
 
