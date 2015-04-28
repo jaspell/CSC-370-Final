@@ -6,7 +6,8 @@ def PI():
 def E():
     return float(2.71)
 
-def blur(image, radius):
+def blur(imageO, radius):
+    image = imageO.image
     #first, make the filter.
     filter = []
     for i in range(0,radius*2+1): 
@@ -19,12 +20,23 @@ def blur(image, radius):
     normFactor = 1.0/total
 
     filter = make_filter(filter, sigma, radius, normFactor)
+    print image
     
-    blurred = color_image.ColorImage(w=image.width, h=image.height)
-    for i in 
+    blurred = color_image.ColorImage(w=imageO.width, h=imageO.height)
+    for j, row in enumerate(image):
+        #make sure we are not at the boundary
+        if j > radius and j < (len(image)-radius):
+            for i,col in enumerate(row):
+                if i > radius and i < (len(row)-radius):
+                    newRed = 0
+                    #TODO: for r, g, b:
+                    for k in range(-radius+1, radius): #Now go through filter and apply blur horizontally
+                        newRed = newRed + image[j][i+k]*filter[k+radius]
+                        print k
+                
 
         
-    print filter
+    #print filter
     
     
     
@@ -39,7 +51,6 @@ def blur(image, radius):
 def get_total_for_filter(filter, sigma, radius):
     total = 0
     for i in filter:
-        print int(i)
         x = int(i)-radius
         val = 1.0/(sigma*math.sqrt(2.0*3.1415))*pow(2.71,(-pow(x,2)/(2.0*pow(sigma,2))))
         total+= val
@@ -54,20 +65,4 @@ def make_filter(filter, sigma, radius, normFactor):
     
 blur(color_image.ColorImage(w=30, h=40),3)
 
-"""
-float total = 0;
-            float sigma = (r - 1.0)/3.0;
-            for (int i = 0; i < r * 2 + 1; i++) {
-                float x = i - r;
-                float val = 1.0/(sigma*sqrt(2.0*PI))*pow(E,(-pow(x,2)/(2.0*pow(sigma, 2))));
-                total += val;
-            }
-            float normFactor = 1.0/total;
-            //now, we multiple gaus fn value by the normalizing factor.
-            for (int i = 0; i < r * 2 + 1; i++) {
-                float x = i - r;
-                float val = 1.0/(sigma*sqrt(2.0*PI))*pow(E,(-pow(x,2)/(2.0*pow(sigma, 2))));
-                filterArray[i] = val*normFactor;
-            }
-"""
     
