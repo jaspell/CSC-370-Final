@@ -34,7 +34,7 @@ class ColorImage:
 			self.width = width
 			self.height = height
 
-			self.image = [[0 for j in range(3*self.width)] for i in range(self.height)]
+			self.image = [[(0, 0, 0) for j in range(self.width)] for i in range(self.height)]
 
 	def read_image(self, image_file):
 		"""
@@ -44,7 +44,7 @@ class ColorImage:
 			image_file - string - path to file containing PNG image
 
 		Returns:
-			width, height, image as 2D array of ints
+			width, height, image as 2D array of tuples
 		"""
 
 		with open(image_file, 'r') as inf:
@@ -58,8 +58,8 @@ class ColorImage:
 
 			for line in pixels:
 				row = []
-				for value in line:
-					row.append(value)
+				for i in range(width):
+					row.append((line[3*i], line[3*i + 1], line[3*i + 2]))
 				image.append(row)
 
 		return width, height, image
@@ -78,5 +78,15 @@ class ColorImage:
 		# Write output to file.
 		with open(filename, 'wb') as outf:
 			writer = png.Writer(self.width, self.height)
-			writer.write(outf, self.image)
+
+			# Convert image from tuples to list format.
+			pic = []
+			for line in self.image:
+				row = []
+				for tup in line:
+					for i in range(3):
+						row.append(tup[i])
+				pic.append(row)
+
+			writer.write(outf, pic)
 
