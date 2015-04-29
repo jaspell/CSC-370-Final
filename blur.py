@@ -18,6 +18,7 @@ def blur(image_original, radius):
     filt = make_filter(filt, sigma, radius, normFactor)
     
     blurred = one_dimensional_blur(image_original, radius, filt, "horizontal")  
+    blurred.write_to_file("horizontal.png")
     final_blurred= one_dimensional_blur(blurred, radius, filt, "vertical")
 
     
@@ -48,7 +49,6 @@ def one_dimensional_blur(image_original, radius, filt, blur_mode):
                     #make new pixel as a tuple to be inserted.    
                     pixel = (int(newRed), int(newGreen), int(newBlue))
                     blurred.image[j][i] = pixel
-    #blurred.write_to_file("horizontal.png")
     return blurred
 
 def get_total_for_filter(filt, sigma, radius):
