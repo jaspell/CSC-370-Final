@@ -23,15 +23,16 @@ def main():
 	#image = color_image.ColorImage(color_file)
 	#image = color_image.ColorImage(w=20, h=100)
 
-	#image = depth_image.DepthImage(depth_file)
+	image = depth_image.DepthImage(depth_file)
+	image.write_to_file(test_file)
 
 	#print len(image.image[0])
 
 	#blur(color_image.ColorImage(color_file),10)
 	
-	final = edge_detect(blackwhite_file,10)
+	#final = edge_detect(blackwhite_file,10)
 	
-	final.write_to_file(test_file)
+	#final.write_to_file(test_file)
 
 def edge_detect(image_file, filter_radius):
 	original_image = color_image.ColorImage(image_file)
