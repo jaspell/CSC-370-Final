@@ -3,9 +3,9 @@
 """Depth Image object for Final Project (Depth Image Segmentation)."""
 
 import sys
-import re
 
-import color_image
+import png
+
 
 __author__ = "Micah Brown and Jackson Spell"
 __email__ = "msbrown@davidson.edu, jaspell@davidson.edu"
@@ -132,16 +132,14 @@ class DepthImage:
 
 		print maximum, minimum
 
-		# Create a new empty color image to write greyscale onto.
-		greyscale = color_image.ColorImage(width=self.width, height=self.height)
+		greyscale = [[0 for j in range(self.width)] for i in range(self.height)]
 
 		# Replace pixels in the color image with scaled pixels of the depth image.
 		for row in range(self.height):
 			for col in range(self.width):
 
-				scaled_value = 255 * (self.image[row][col] - minimum) / (maximum - minimum)
-				print scaled_value
-				
-				greyscale.image[row][col] = (scaled_value, scaled_value, scaled_value) 
+				greyscale[row][col] = 255 * (self.image[row][col] - minimum) / (maximum - minimum) 
 
-		greyscale.write_to_file(filename)
+		with open(filename, 'wb') as outf:
+			writer = png.Writer(self.width, self.height, greyscale=True)
+			writer.write(outf, greyscale)

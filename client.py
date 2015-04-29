@@ -23,23 +23,32 @@ def main():
 	#image = color_image.ColorImage(color_file)
 	#image = color_image.ColorImage(w=20, h=100)
 
-	#image = depth_image.DepthImage(depth_file)
+	image = depth_image.DepthImage(depth_file)
+	image.write_to_file(test_file)
 
 	#print len(image.image[0])
 
 	#blur(color_image.ColorImage(color_file),10)
 	
-	color = True
+	color = False
 	
-	final = edge_detect(color_file,10, color)
+	#final = edge_detect(color_file,10, color)
+
+	final = edge_detect(depth_file,10, color)
 	
 	final.write_to_file(test_file)
 
 def edge_detect(image_file, filter_radius, color):
-	original_image = color_image.ColorImage(image_file)
+	if color:
+		original_image = color_image.ColorImage(image_file)
+		final_image = color_image.ColorImage(width=original_image.width, height=original_image.height)
+		
+	else:
+		original_image = depth_image.DepthImage(image_file)
+		final_image = depth_image.DepthImage(width=original_image.width, height=original_image.height)
+		
 	print "here"
 	blurred_image = blur(original_image,filter_radius, color)
-	final_image = color_image.ColorImage(width=blurred_image.width, height=blurred_image.height)
 	
 	blurred_image.write_to_file("blurred.png")
 	original_image.write_to_file("original.png")
@@ -54,7 +63,7 @@ def edge_detect(image_file, filter_radius, color):
 				
 				pixel = (min(newRed,255), min(newGreen,255), min(newBlue,255))				
 			else:
-				pixel = min(max((blurred_image.image[j][i][0]-original_image.image[j][i][0])*2,0),255)
+				pixel = min(max((blurred_image.image[j][i]-original_image.image[j][i])*2,0),255)
 			
 			final_image.image[j][i]=pixel
 			
@@ -127,6 +136,7 @@ def blur(image, radius, color):
 	filt = make_filter(radius)
 		
 	blurred = one_dimensional_blur(image, radius, filt, "horizontal", color)  
+	print "Done with Horizontal"
 	blurred = one_dimensional_blur(blurred, radius, filt, "vertical", color)
 
 	return blurred
@@ -144,15 +154,17 @@ def one_dimensional_blur(original, radius, filt, blur_mode, color):
 	Returns:
 		ColorImage - image blurred in given direction
 	"""
-	
-	blurred = color_image.ColorImage(width=original.width, height=original.height)
-	
+	if color:
+		blurred = color_image.ColorImage(width=original.width, height=original.height)
+	else:
+		blurred = depth_image.DepthImage(width=original.width, height=original.height)
 	# Make sure we are not at the boundary.
 	for j in range(radius, original.height - radius):
 		for i in range(radius, original.width - radius):
 
 			newRed, newGreen, newBlue = 0, 0, 0
-
+			pixel = 0
+			
 			# Go through filter and apply blur in the given direction.
 			for k in range(-radius + 1, radius): 
 
@@ -170,6 +182,7 @@ def one_dimensional_blur(original, radius, filt, blur_mode, color):
 						newGreen += original.image[j+k][i][1] * filt[k+radius]
 						newBlue += original.image[j+k][i][2] * filt[k+radius]    
 					else:
+						#print original.image[j+k][i]
 						pixel += original.image[j+k][i] * filt[k+radius]
 				else:
 					print "ERROR HAS OCCURED. Expected 'horizontal' or 'vertical' for blur mode but received ", blur_mode
@@ -178,7 +191,7 @@ def one_dimensional_blur(original, radius, filt, blur_mode, color):
 			# Make new pixel as a tuple to be inserted.    
 			if(color):
 				pixel = (int(newRed), int(newGreen), int(newBlue))
-			blurred.image[j][i] = pixel
+			blurred.image[j][i] = int(pixel)
 
 	return blurred
 
