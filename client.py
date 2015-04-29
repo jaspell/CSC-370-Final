@@ -26,9 +26,32 @@ def main():
 
 	#print len(image.image[0])
 
-	blur(color_image.ColorImage(color_file),10)
+	#blur(color_image.ColorImage(color_file),10)
+	
+	final = edge_detect(color_file,10)
+	
+	final.write_to_file(test_file)
 
-	#image.write_to_file(test_file)
+def edge_detect(image_file, filter_radius):
+	blurred_image = blur(color_image.ColorImage(image_file),10)
+	final_image = color_image.ColorImage(width=blurred_image.width, height=blurred_image.height)
+	original_image = color_image.ColorImage(image_file)
+	
+	blurred_image.write_to_file("blurred.png")
+	original_image.write_to_file("original.png")
+	
+	#subtract original image from the blurred image
+	for j, row in enumerate(blurred_image.image):
+		#make sure we are not at the boundary
+		if j > filter_radius and j < (len(blurred_image.image)-filter_radius):
+			newRed, newGreen, newBlue = 0,0,0
+			for i,col in enumerate(row):
+				if i > filter_radius and i < (len(row)-filter_radius):
+					newRed = max((blurred_image.image[j][i][0]-original_image.image[j][i][0])*10,0)
+					newGreen = max((blurred_image.image[j][i][1]-original_image.image[j][i][1])*10,0)
+					newBlue = max((blurred_image.image[j][i][2]-original_image.image[j][i][2])*10,0)
+			final_image.image[j][i]=(min(newRed,255), min(newGreen,255), min(newBlue,255))		
+	return final_image
 
 def create_segmented_image(regions, width, height):
 	"""
@@ -96,8 +119,8 @@ def blur(image_original, radius):
 	final_blurred= one_dimensional_blur(blurred, radius, filt, "vertical")
 
 	
-	final_blurred.write_to_file("test.png")         
-   
+	#final_blurred.write_to_file("test.png")         
+	return final_blurred
 
 def one_dimensional_blur(image_original, radius, filt, blur_mode):
 	blurred = color_image.ColorImage(width=image_original.width, height=image_original.height)
