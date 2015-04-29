@@ -55,8 +55,11 @@ class ColorImage:
 
 			# Read pixels into internal image storage
 			image = []
-
+			
 			for line in pixels:
+				
+				print line[0]
+				
 				row = []
 				for i in range(width):
 					row.append((line[3*i], line[3*i + 1], line[3*i + 2]))

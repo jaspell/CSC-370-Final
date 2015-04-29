@@ -16,6 +16,7 @@ def main():
 
 	depth_file = os.path.expanduser("~/Desktop/Images/DepthData/img_0000.yml")
 	color_file = os.path.expanduser("~/Desktop/Images/KinectColor/img_0000.png")
+	blackwhite_file = os.path.expanduser("~/Desktop/Images/RegisteredDepthData/img_0003_abs.png")
 
 	test_file = "test.png"
 
@@ -28,30 +29,29 @@ def main():
 
 	#blur(color_image.ColorImage(color_file),10)
 	
-	final = edge_detect(color_file,10)
+	final = edge_detect(blackwhite_file,10)
 	
 	final.write_to_file(test_file)
 
 def edge_detect(image_file, filter_radius):
-	blurred_image = blur(color_image.ColorImage(image_file),10)
-	final_image = color_image.ColorImage(width=blurred_image.width, height=blurred_image.height)
 	original_image = color_image.ColorImage(image_file)
+	print "here"
+	blurred_image = blur(original_image,filter_radius)
+	final_image = color_image.ColorImage(width=blurred_image.width, height=blurred_image.height)
 	
 	blurred_image.write_to_file("blurred.png")
 	original_image.write_to_file("original.png")
 	
-	#subtract original image from the blurred image
-	for j, row in enumerate(blurred_image.image):
-		#make sure we are not at the boundary
-		if j > filter_radius and j < (len(blurred_image.image)-filter_radius):
-			newRed, newGreen, newBlue = 0,0,0
-			for i,col in enumerate(row):
-				if i > filter_radius and i < (len(row)-filter_radius):
-					newRed = max((blurred_image.image[j][i][0]-original_image.image[j][i][0])*10,0)
-					newGreen = max((blurred_image.image[j][i][1]-original_image.image[j][i][1])*10,0)
-					newBlue = max((blurred_image.image[j][i][2]-original_image.image[j][i][2])*10,0)
+	
+	for j in range(filter_radius, original_image.height - filter_radius):
+		for i in range(filter_radius, original_image.width - filter_radius):
+			
+			newRed = max((blurred_image.image[j][i][0]-original_image.image[j][i][0])*2,0)
+			newGreen = max((blurred_image.image[j][i][1]-original_image.image[j][i][1])*2,0)
+			newBlue = max((blurred_image.image[j][i][2]-original_image.image[j][i][2])*2,0)
 			final_image.image[j][i]=(min(newRed,255), min(newGreen,255), min(newBlue,255))		
 	return final_image
+	
 
 def create_segmented_image(regions, width, height):
 	"""
@@ -95,60 +95,80 @@ def laplacian_segment(image):
 	"""
 	pass
 
-def blur(image_original, radius):
+def blur(image, radius):
 	"""
 	Blur image according to given radius.
 
 	Parameters:
-		image_original - ColorImage - original image
+		image - ColorImage - original image
 		radius - int - radius around each pixel to blur
 
 	Returns:
 		ColorImage - blurred image
 	"""
 
-	image = image_original.image
-
-	total = get_total_for_filter(radius)    
+	filt = make_filter(radius)
 	
-	normFactor = 1.0/total
-	filt = make_filter(radius, normFactor)
-	
-	blurred = one_dimensional_blur(image_original, radius, filt, "horizontal")  
+	blurred = one_dimensional_blur(image, radius, filt, "horizontal")  
+	blurred = one_dimensional_blur(blurred, radius, filt, "vertical")
 
-	final_blurred= one_dimensional_blur(blurred, radius, filt, "vertical")
+	return blurred
 
-	
-	#final_blurred.write_to_file("test.png")         
-	return final_blurred
+def one_dimensional_blur(original, radius, filt, blur_mode):
+	"""
+	Blur image in given direction.
 
-def one_dimensional_blur(image_original, radius, filt, blur_mode):
-	blurred = color_image.ColorImage(width=image_original.width, height=image_original.height)
-	image = image_original.image
+	Parameters:
+		original - ColorImage - original image
+		radius - int - radius around each pixel to blur
+		filt - list of floats - blur filter
+		blur_mode - string - "horizontal" or "vertical" - direction in which to blur
+
+	Returns:
+		ColorImage - image blurred in given direction
+	"""
+
+	blurred = color_image.ColorImage(width=original.width, height=original.height)
 	
-	for j, row in enumerate(image):
-		#make sure we are not at the boundary
-		if j > radius and j < (len(image)-radius):
-			for i,col in enumerate(row):
-				if i > radius and i < (len(row)-radius):
-					newRed, newGreen, newBlue = 0,0,0
-					for k in range(-radius+1, radius): #Now go through filter and apply blur horizontally
-						if blur_mode == "horizontal":
-							newRed = newRed + image[j][i+k][0]*filt[k+radius]
-							newGreen = newGreen + image[j][i+k][1]*filt[k+radius]
-							newBlue = newBlue + image[j][i+k][2]*filt[k+radius]
-						elif blur_mode == "vertical":
-							newRed = newRed + image[j+k][i][0]*filt[k+radius]
-							newGreen = newGreen + image[j+k][i][1]*filt[k+radius]
-							newBlue = newBlue + image[j+k][i][2]*filt[k+radius]       
-						else:
-							print "ERROR HAS OCCURED. Expected 'horizontal' or 'verticle' for blur mode but received ", blur_mode
-					#make new pixel as a tuple to be inserted.    
-					pixel = (int(newRed), int(newGreen), int(newBlue))
-					blurred.image[j][i] = pixel
+	# Make sure we are not at the boundary.
+	for j in range(radius, original.height - radius):
+		for i in range(radius, original.width - radius):
+
+			newRed, newGreen, newBlue = 0, 0, 0
+
+			# Go through filter and apply blur in the given direction.
+			for k in range(-radius + 1, radius): 
+
+				if blur_mode == "horizontal":
+					newRed += original.image[j][i+k][0] * filt[k+radius]
+					newGreen += original.image[j][i+k][1] * filt[k+radius]
+					newBlue += original.image[j][i+k][2] * filt[k+radius]
+
+				elif blur_mode == "vertical":
+					newRed += original.image[j+k][i][0] * filt[k+radius]
+					newGreen += original.image[j+k][i][1] * filt[k+radius]
+					newBlue += original.image[j+k][i][2] * filt[k+radius]    
+
+				else:
+					print "ERROR HAS OCCURED. Expected 'horizontal' or 'vertical' for blur mode but received ", blur_mode
+					exit()
+
+			# Make new pixel as a tuple to be inserted.    
+			pixel = (int(newRed), int(newGreen), int(newBlue))
+			blurred.image[j][i] = pixel
+
 	return blurred
 
 def get_total_for_filter(radius):
+	"""
+	Determine the filter's total.
+
+	Parameters:
+		radius - int - radius around each pixel to blur
+
+	Returns:
+		int - filter's total
+	"""
 
 	total = 0
 
@@ -163,11 +183,21 @@ def get_total_for_filter(radius):
 
 	return total
 
-def make_filter(radius, normFactor):
+def make_filter(radius):
+	"""
+	Make the filter for the blur.
+
+	Parameters:
+		radius - int - radius around each pixel to blur
+
+	Returns:
+		list of floats - blur filter
+	"""
 
 	filt = []
 
 	sigma = (radius - 1) / 3.0
+	normFactor = 1.0 / get_total_for_filter(radius)
 
 	for i in range(2*radius + 1):
 

@@ -45,7 +45,7 @@ def one_dimensional_blur(image_original, radius, filt, blur_mode):
                             newGreen = newGreen + image[j+k][i][1]*filt[k+radius]
                             newBlue = newBlue + image[j+k][i][2]*filt[k+radius]       
                         else:
-                            print "ERROR HAS OCCURED. Expected 'horizontal' or 'verticle' for blur mode but received ", blur_mode
+                            print "ERROR HAS OCCURED. Expected 'horizontal' or 'vertical' for blur mode but received ", blur_mode
                     #make new pixel as a tuple to be inserted.    
                     pixel = (int(newRed), int(newGreen), int(newBlue))
                     blurred.image[j][i] = pixel
