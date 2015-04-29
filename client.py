@@ -57,6 +57,30 @@ def create_segmented_image(regions, width, height):
 														  
 	return segmented_image
 
+def laplacian_segment(image):
+	"""
+	Segment the depth image using the Laplacian technique.
+
+	Parameters:
+		image - DepthImage - depth image to be segmented
+
+	Returns:
+		list of lists of tuples - segmented regions
+	"""
+	pass
+
+def gradient_segment(image, ):
+	"""
+	Segment the depth image using the gradient technique.
+
+	Parameters:
+		image - DepthImage - depth image to be segmented
+
+	Returns:
+		list of lists of tuples - segmented regions
+	"""
+
+	pass
 
 if __name__ == "__main__":
 	main()
