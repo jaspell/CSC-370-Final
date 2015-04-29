@@ -60,17 +60,26 @@ def create_segmented_image(regions, width, height):
 														  
 	return segmented_image
 
-def laplacian_segment(image):
+def laplacian_segment(image, threshold):
 	"""
 	Segment the depth image using the Laplacian technique.
 
 	Parameters:
 		image - DepthImage - depth image to be segmented
+		threshold - int - 0 <= threshold < 256 - minimum value of edge between regions
 
 	Returns:
 		list of lists of tuples - segmented regions
 	"""
+	
 	pass
+
+	#subtracted
+
+	# Track the pixels that have been grouped.
+	#grouped = [[False for i in range(width)] for j in range(height)]
+
+	#while 
 
 def blur(image, radius):
 	"""
