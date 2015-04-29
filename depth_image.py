@@ -3,8 +3,7 @@
 """Depth Image object for Final Project (Depth Image Segmentation)."""
 
 import sys
-
-import yaml
+import re
 
 import color_image
 
@@ -53,9 +52,59 @@ class DepthImage:
 
 		with open(image_file, 'r') as inf:
 
-			data = yaml.load(inf)
+			# Skip first 2 lines.
+			for i in range(2):
+				inf.readline()
 
-			
+			# Read in width and height.
+			width = int(inf.readline()[10:])
+			height = int(inf.readline()[11:])
+			image = []
+
+			# Skip next 3 lines.
+			for i in range(3):
+				inf.readline()
+
+			# Read in data.
+			tokens = inf.readline().split()
+			curr = 0
+
+			for row in range(height):
+
+				line = []
+
+				for col in range(width):
+
+					#print row, col, curr, tokens
+
+					# If end of tokens is reached, read new line.
+					if curr == len(tokens):
+						tokens = inf.readline().split()
+						curr = 0
+
+					#print tokens, tokens[curr], row, col
+
+					# Keep reading until a number is found.
+					while tokens[curr][-1] not in  [',', '.']:
+
+						curr += 1
+
+						# If end of tokens is reached, read new line.
+						if curr == len(tokens):
+							tokens = inf.readline().split()
+							curr = 0
+
+						#print tokens, tokens[curr], row, col
+
+					# Cut the comma off the number and append to row.
+					line.append(int(float(tokens[curr][:-1])))
+					#print tokens[curr][:-1]
+					curr += 1
+
+				# Append line to image.
+				image.append(line)
+
+		return width, height, image
 
 	def write_to_file(self, filename):
 		"""
@@ -81,6 +130,8 @@ class DepthImage:
 				elif value < minimum:
 					minimum = value
 
+		print maximum, minimum
+
 		# Create a new empty color image to write greyscale onto.
 		greyscale = color_image.ColorImage(width=self.width, height=self.height)
 
@@ -88,10 +139,9 @@ class DepthImage:
 		for row in range(self.height):
 			for col in range(self.width):
 
-				scaled_value = 256 * (self.image[row][col] - minimum) / (maximum - minimum)
+				scaled_value = 255 * (self.image[row][col] - minimum) / (maximum - minimum)
+				print scaled_value
 				
-				greyscale.image[row][3*col - 1] = scaled_value
-				greyscale.image[row][3*col] = scaled_value
-				greyscale.image[row][3*col + 1] = scaled_value
+				greyscale.image[row][col] = (scaled_value, scaled_value, scaled_value) 
 
 		greyscale.write_to_file(filename)

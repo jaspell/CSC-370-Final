@@ -17,10 +17,10 @@ def main():
 
 	test_file = "test.png"
 
-	image = color_image.ColorImage(color_file)
+	#image = color_image.ColorImage(color_file)
 	#image = color_image.ColorImage(w=20, h=100)
 
-	#image = depth_image.DepthImage(depth_file)
+	image = depth_image.DepthImage(depth_file)
 
 	#print len(image.image[0])
 
