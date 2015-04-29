@@ -69,12 +69,13 @@ def laplacian_segment(image):
 	"""
 	pass
 
-def gradient_segment(image, ):
+def gradient_segment(image, threshold):
 	"""
 	Segment the depth image using the gradient technique.
 
 	Parameters:
 		image - DepthImage - depth image to be segmented
+		threshold - float - maximum angle between two pixels in the same region
 
 	Returns:
 		list of lists of tuples - segmented regions
