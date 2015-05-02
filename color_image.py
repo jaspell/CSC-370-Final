@@ -7,7 +7,7 @@ import png
 __author__ = "Micah Brown and Jackson Spell"
 __email__ = "msbrown@davidson.edu, jaspell@davidson.edu"
 
-class ColorImage:
+class ColorImage(object):
 	"""
 	Color image object.
 	"""
