@@ -14,9 +14,9 @@ __email__ = "msbrown@davidson.edu, jaspell@davidson.edu"
 
 def main():
 
-	depth_file = os.path.expanduser("~/Desktop/Images/DepthData/img_0000.yml")
+	depth_file = os.path.expanduser("~/Desktop/Images/DepthData/img_0005.yml")
 	color_file = os.path.expanduser("~/Desktop/Images/KinectColor/img_0004.png")
-	blackwhite_file = os.path.expanduser("~/Desktop/Images/RegisteredDepthData/img_0003_abs.png")
+	blackwhite_file = os.path.expanduser("~/Desktop/Images/RegisteredDepthData/img_0005_abs.png")
 
 	test_file = "test.png"
 
@@ -24,7 +24,9 @@ def main():
 	#image = color_image.ColorImage(w=20, h=100)
 
 	image = depth_image.DepthImage(depth_file)
-	image.write_to_file(test_file)
+	image.write_to_file("original.png")
+	image = blur(image, 10, False)
+	image.write_to_file("blur.png")
 
 	#print len(image.image[0])
 
@@ -33,6 +35,8 @@ def main():
 	color = False
 	
 	#final = edge_detect(color_file,10, color)
+	
+	
 
 	final = edge_detect(depth_file,10, color)
 	
@@ -57,13 +61,13 @@ def edge_detect(image_file, filter_radius, color):
 	for j in range(filter_radius, original_image.height - filter_radius):
 		for i in range(filter_radius, original_image.width - filter_radius):
 			if(color):
-				newRed = max((blurred_image.image[j][i][0]-original_image.image[j][i][0])*2,0)
-				newGreen = max((blurred_image.image[j][i][1]-original_image.image[j][i][1])*2,0)
-				newBlue = max((blurred_image.image[j][i][2]-original_image.image[j][i][2])*2,0)
+				newRed = max((blurred_image.image[j][i][0]-original_image.image[j][i][0])*20,0)
+				newGreen = max((blurred_image.image[j][i][1]-original_image.image[j][i][1])*20,0)
+				newBlue = max((blurred_image.image[j][i][2]-original_image.image[j][i][2])*20,0)
 				
 				pixel = (min(newRed,255), min(newGreen,255), min(newBlue,255))				
 			else:
-				pixel = min(max((blurred_image.image[j][i]-original_image.image[j][i])*2,0),255)
+				pixel = min(max((blurred_image.image[j][i]-original_image.image[j][i])*20,0),255)
 			
 			final_image.image[j][i]=pixel
 			
@@ -128,6 +132,7 @@ def blur(image, radius, color):
 	Parameters:
 		image - ColorImage - original image
 		radius - int - radius around each pixel to blur
+		blur - bool - switch so that we can blur color and B&W images.
 
 	Returns:
 		ColorImage - blurred image
