@@ -35,6 +35,19 @@ class ColorImage:
 			self.height = height
 
 			self.image = [[(0, 0, 0) for j in range(self.width)] for i in range(self.height)]
+			
+	def __getitem__(self, key):
+		"""
+		[] getter operator overload.
+		
+		Parameters:
+		key - int - the index of the image list
+		
+		Returns:
+		the list at index = key of the image.
+		"""
+		
+		return self.image[key]	
 
 	def read_image(self, image_file):
 		"""
