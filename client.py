@@ -18,7 +18,7 @@ def main():
 	color_file = os.path.expanduser("~/Desktop/Images/KinectColor/img_0004.png")
 	blackwhite_file = os.path.expanduser("~/Desktop/Images/RegisteredDepthData/img_0005_abs.png")
 
-	test_file = "test.png"
+	test_file = "test1.png"
 
 	#image = color_image.ColorImage(color_file)
 	#image = color_image.ColorImage(w=20, h=100)
@@ -36,9 +36,10 @@ def main():
 	
 	#final = edge_detect(color_file,10, color)
 	
-	
 
 	final = edge_detect(depth_file,10, color)
+	
+	laplacian_segment(final, 200)
 	
 	final.write_to_file(test_file)
 
@@ -51,7 +52,6 @@ def edge_detect(image_file, filter_radius, color):
 		original_image = depth_image.DepthImage(image_file)
 		final_image = depth_image.DepthImage(width=original_image.width, height=original_image.height)
 		
-	print "here"
 	blurred_image = blur(original_image,filter_radius, color)
 	
 	blurred_image.write_to_file("blurred.png")
@@ -61,15 +61,15 @@ def edge_detect(image_file, filter_radius, color):
 	for j in range(filter_radius, original_image.height - filter_radius):
 		for i in range(filter_radius, original_image.width - filter_radius):
 			if(color):
-				newRed = max((blurred_image.image[j][i][0]-original_image.image[j][i][0])*20,0)
-				newGreen = max((blurred_image.image[j][i][1]-original_image.image[j][i][1])*20,0)
-				newBlue = max((blurred_image.image[j][i][2]-original_image.image[j][i][2])*20,0)
+				newRed = max((blurred_image[j][i][0]-original_image[j][i][0])*20,0)
+				newGreen = max((blurred_image[j][i][1]-original_image[j][i][1])*20,0)
+				newBlue = max((blurred_image[j][i][2]-original_image[j][i][2])*20,0)
 				
 				pixel = (min(newRed,255), min(newGreen,255), min(newBlue,255))				
 			else:
-				pixel = min(max((blurred_image.image[j][i]-original_image.image[j][i])*20,0),255)
+				pixel = min(max((blurred_image[j][i]-original_image[j][i])*20,0),255)
 			
-			final_image.image[j][i]=pixel
+			final_image[j][i]=pixel
 			
 	return final_image
 	
@@ -100,7 +100,7 @@ def create_segmented_image(regions, width, height):
 			#Now go through and change the R, G, and B vals.
 			for i in range(0,3): 
 
-				segmented_image.image[coord_tuple[1]][3*coord_tuple[0]+i] = rgb[i]
+				segmented_image[coord_tuple[1]][3*coord_tuple[0]+i] = rgb[i]
 														  
 	return segmented_image
 
@@ -115,8 +115,17 @@ def laplacian_segment(image, threshold):
 	Returns:
 		list of lists of tuples - segmented regions
 	"""
+	regions = [] #the list of list of tuples that will be returned.
+	already_added = [] #keeps track of pixels already added to a region.
 	
-	pass
+	
+	for j in range(image.height):
+		for i in range(image.width):
+			# if current pixel is dark enough, we create new region (unless pix. is already in a region)
+			if image[j][i] < threshold:
+				if not already_in_region(j, i, regions):
+					pass
+					
 
 	#subtracted
 
@@ -124,6 +133,9 @@ def laplacian_segment(image, threshold):
 	#grouped = [[False for i in range(width)] for j in range(height)]
 
 	#while 
+def already_in_region(row, col, regions):
+	pass
+
 
 def blur(image, radius, color):
 	"""
@@ -141,7 +153,7 @@ def blur(image, radius, color):
 	filt = make_filter(radius)
 		
 	blurred = one_dimensional_blur(image, radius, filt, "horizontal", color)  
-	print "Done with Horizontal"
+	#print "Done with Horizontal"
 	blurred = one_dimensional_blur(blurred, radius, filt, "vertical", color)
 
 	return blurred
@@ -175,20 +187,20 @@ def one_dimensional_blur(original, radius, filt, blur_mode, color):
 
 				if blur_mode == "horizontal":
 					if(color):
-						newRed += original.image[j][i+k][0] * filt[k+radius]
-						newGreen += original.image[j][i+k][1] * filt[k+radius]
-						newBlue += original.image[j][i+k][2] * filt[k+radius]
+						newRed += original[j][i+k][0] * filt[k+radius]
+						newGreen += original[j][i+k][1] * filt[k+radius]
+						newBlue += original[j][i+k][2] * filt[k+radius]
 					else:
-						pixel += original.image[j][i+k] * filt[k+radius]
+						pixel += original[j][i+k] * filt[k+radius]
 						
 				elif blur_mode == "vertical":
 					if(color):
-						newRed += original.image[j+k][i][0] * filt[k+radius]
-						newGreen += original.image[j+k][i][1] * filt[k+radius]
-						newBlue += original.image[j+k][i][2] * filt[k+radius]    
+						newRed += original[j+k][i][0] * filt[k+radius]
+						newGreen += original[j+k][i][1] * filt[k+radius]
+						newBlue += original[j+k][i][2] * filt[k+radius]    
 					else:
-						#print original.image[j+k][i]
-						pixel += original.image[j+k][i] * filt[k+radius]
+						#print original[j+k][i]
+						pixel += original[j+k][i] * filt[k+radius]
 				else:
 					print "ERROR HAS OCCURED. Expected 'horizontal' or 'vertical' for blur mode but received ", blur_mode
 					exit()
@@ -196,7 +208,7 @@ def one_dimensional_blur(original, radius, filt, blur_mode, color):
 			# Make new pixel as a tuple to be inserted.    
 			if(color):
 				pixel = (int(newRed), int(newGreen), int(newBlue))
-			blurred.image[j][i] = int(pixel)
+			blurred[j][i] = int(pixel)
 
 	return blurred
 
