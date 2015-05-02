@@ -30,9 +30,7 @@ def main():
 
 	#print len(original.image[0])
 
-
-
-	final = edge_detect(original, 10)
+	final = edge_detect(original, 10, 20)
 	
 	laplacian_segment(final, 200)
 	
@@ -59,7 +57,6 @@ def edge_detect(original, radius, scale):
 		final = depth_image.DepthImage(width=original.width, height=original.height)
 	
 	blurred = blur(original, radius)
-	
 
 	# Subtract original image from blurred to locate edges.
 	for j in range(radius, original.height - radius):
@@ -122,27 +119,14 @@ def laplacian_segment(image, threshold):
 	Returns:
 		list of lists of tuples - segmented regions
 	"""
-	regions = [] #the list of list of tuples that will be returned.
-	already_added = [] #keeps track of pixels already added to a region.
-	
-	
-	for j in range(image.height):
-		for i in range(image.width):
-			# if current pixel is dark enough, we create new region (unless pix. is already in a region)
-			if image[j][i] < threshold:
-				if not already_in_region(j, i, regions):
-					pass
+	pass
 					
-
 	#subtracted
 
 	# Track the pixels that have been grouped.
 	#grouped = [[False for i in range(width)] for j in range(height)]
 
 	#while 
-def already_in_region(row, col, regions):
-	pass
-
 
 def blur(original, radius):
 	"""
