@@ -39,6 +39,18 @@ def main():
 	final.write_to_file(test_file)
 
 def edge_detect(image_file, filter_radius, color):
+	"""
+	Create an edge-detected ColorImage.
+
+	Parameters:
+		image_file - ColorImage - original image
+		filter_radius - int - radius of blurring filter
+		color - boolean - whether the image is in color
+
+	Returns:
+		ColorImage - edge-detected image
+	"""
+
 	if color:
 		original_image = color_image.ColorImage(image_file)
 		final_image = color_image.ColorImage(width=original_image.width, height=original_image.height)
@@ -46,25 +58,28 @@ def edge_detect(image_file, filter_radius, color):
 	else:
 		original_image = depth_image.DepthImage(image_file)
 		final_image = depth_image.DepthImage(width=original_image.width, height=original_image.height)
-		
-	print "here"
+	
 	blurred_image = blur(original_image,filter_radius, color)
 	
-	blurred_image.write_to_file("blurred.png")
-	original_image.write_to_file("original.png")
+	#blurred_image.write_to_file("blurred.png")
+	#original_image.write_to_file("original.png")
 	
-	
+	# Subtract original image from blurred to locate edges.
 	for j in range(filter_radius, original_image.height - filter_radius):
 		for i in range(filter_radius, original_image.width - filter_radius):
+
+			# Construct a pixel from the original and blurred pictures.
 			if(color):
 				newRed = max((blurred_image.image[j][i][0]-original_image.image[j][i][0])*2,0)
 				newGreen = max((blurred_image.image[j][i][1]-original_image.image[j][i][1])*2,0)
 				newBlue = max((blurred_image.image[j][i][2]-original_image.image[j][i][2])*2,0)
 				
-				pixel = (min(newRed,255), min(newGreen,255), min(newBlue,255))				
+				pixel = (min(newRed,255), min(newGreen,255), min(newBlue,255))			
+
 			else:
 				pixel = min(max((blurred_image.image[j][i]-original_image.image[j][i])*2,0),255)
 			
+			# Add the pixel to the final image.
 			final_image.image[j][i]=pixel
 			
 	return final_image
@@ -185,7 +200,8 @@ def one_dimensional_blur(original, radius, filt, blur_mode, color):
 						#print original.image[j+k][i]
 						pixel += original.image[j+k][i] * filt[k+radius]
 				else:
-					print "ERROR HAS OCCURED. Expected 'horizontal' or 'vertical' for blur mode but received ", blur_mode
+					print ("ERROR HAS OCCURED. Expected 'horizontal' or 'vertical' for blur mode "
+						   "but received "), blur_mode
 					exit()
 
 			# Make new pixel as a tuple to be inserted.    

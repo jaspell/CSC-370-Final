@@ -10,7 +10,7 @@ import png
 __author__ = "Micah Brown and Jackson Spell"
 __email__ = "msbrown@davidson.edu, jaspell@davidson.edu"
 
-class DepthImage:
+class DepthImage(object):
 	"""
 	A depth image.
 	"""
