@@ -5,7 +5,7 @@
 import os
 import math
 from random import randint
-import queue
+import Queue
 
 import color_image
 import depth_image
@@ -64,7 +64,7 @@ def laplacian_segment(original, threshold, radius, scale):
 	edged = edge_detect(original, radius, scale)
 					
 	# Create 2D boolean array, setting borders and detected edges to True.
-	added = [[True if original[i][j] > threshold 
+	added = [[True if edged[i][j] > threshold 
 				   or i == 0 
 				   or i == original.height - 1 
 				   or j == 0 
@@ -78,7 +78,7 @@ def laplacian_segment(original, threshold, radius, scale):
 			if not added[i][j]:
 				regions.append(group_region(added, i, j))
 
-	return regions
+	return create_segmented_image(regions, original.width, original.height)
 
 def blur(original, radius):
 	"""
@@ -196,7 +196,7 @@ def get_total_for_filter(radius):
 
 	return total
 
-def group_regions(added, i, j):
+def group_region(added, i, j):
 	"""
 	Group pixels into a region via floodfill for Laplacian segmentation.
 
