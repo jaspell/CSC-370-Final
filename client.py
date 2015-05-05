@@ -130,8 +130,16 @@ def angle_between(normal1, normal2):
 	Find the angle between the given normals.
 
 	Parameters:
-		normal1 - (float, float)
+		normal1 - (float, float) - angle for normal 1
+		normal2 - (float, float) - angle for normal 2
+
+	Returns:
+		float - angle between normal1 and normal2
 	"""
+
+	return math.acos(math.cos(normal1[0]) * math.cos(normal2[0]) + 
+					 math.sin(normal1[0]) * math.sin(normal2[0]) * 
+					 math.cos(normal1[1] - normal2[1]))
 
 def blur(original, radius):
 	"""
@@ -280,9 +288,14 @@ def group_region(added, i, j, normals=None, threshold=None):
 			for i in range(-1, 2):
 
 				if not added[x][y+i] and angle_between(normals[x][y], normals[x][y+i]) < threshold:
-
+					q.put((x, y+i))
+					added[x][y+i] = True
+					region.append((x, y+i))
 
 				if not added[x+i][y] and angle_between(normals[x][y], normals[x+i][y]) < threshold:
+					q.put((x+i, y))
+					added[x+i][y] = True
+					region.append((x+i, y))
 
 		else:
 			# Add edge-adjacent neighbors to the region if they have not been added.
