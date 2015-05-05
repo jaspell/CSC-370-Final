@@ -17,8 +17,8 @@ verbose = True
 
 def main():
 
-	depth_file = os.path.expanduser("~/Desktop/Images/DepthData/img_0321.yml")
-	color_file = os.path.expanduser("~/Desktop/Images/KinectColor/img_0321.png")
+	depth_file = os.path.expanduser("~/Desktop/Images/DepthData/img_0331.yml")
+	color_file = os.path.expanduser("~/Desktop/Images/KinectColor/img_0331.png")
 	blackwhite_file = os.path.expanduser("~/Desktop/Images/RegisteredDepthData/img_0000_abs.png")
 
 	depth_test_file = "depth_test.png"
@@ -35,14 +35,17 @@ def main():
 
 	#print len(original.image[0])
 
-	depth_threshold = 20
-	color_threshold = 100
-	radius = 10
+
+	depth_threshold = 5
+	color_threshold = 10
+	radius = 8
+
 	scale = 20
 	border = 25
 	
-	laplacian_segment(original, depth_threshold, radius, scale, border).write_to_file(depth_test_file)
 	laplacian_segment(color, color_threshold, radius, scale, border).write_to_file(color_test_file)
+	laplacian_segment(original, depth_threshold, radius, scale, border).write_to_file(depth_test_file)
+
 
 	if verbose:
 		print "Done."
@@ -59,11 +62,24 @@ def gradient_segment(original, threshold):
 		list of lists of tuples - segmented regions
 	"""
 
-	added = [[False for j in range(width)] for i in range(height)]
+	added = [[True if i == 0 
+				   or i == original.height - 1
+				   or j == 0
+				   or j == original.width - 1
+				   else False for j in range(original.width)] for i in range(original.height)]
 
 	# Calculate normal vector for each pixel.
-	normals = [[0.0 for j in range(width)] for i in range(height)]
-	# CALCULATE NORMALS.  HOW DO WE DO IT?!?!?!
+	normals = [[(0.0,0.0) for j in range(original.width)] for i in range(original.height)]
+
+	for i in range(1, original.height-1):
+		for j in range(1, original.width-1):
+
+			theta = math.atan((original[i][j+1]-original[i][j-1])/2)
+			phi = math.atan((original[i+1][j]-original[i-1][j])/2)
+			
+			normals[i][j] = (theta, phi)
+
+	regions = []
 
 	for i in range(original.height):
 		for j in range(original.width):
@@ -93,8 +109,12 @@ def laplacian_segment(original, threshold, radius, scale, border):
 	color = type(original) is color_image.ColorImage 
 
 	edged = edge_detect(original, radius, scale)
+	edged.write_to_file("edged_no_blur.png")
+	
+	edged = blur(edged, 3) 
 
-	edged.write_to_file("edged.png")
+	edged.write_to_file("edged_blurred.png")
+	edged
 					
 	# Create 2D boolean array, setting borders and detected edges to True.
 	if color:
@@ -136,6 +156,7 @@ def angle_between(normal1, normal2):
 	Returns:
 		float - angle between normal1 and normal2
 	"""
+	
 
 	return math.acos(math.cos(normal1[0]) * math.cos(normal2[0]) + 
 					 math.sin(normal1[0]) * math.sin(normal2[0]) * 
@@ -312,7 +333,8 @@ def group_region(added, i, j, normals=None, threshold=None):
 					region.append((x+i, y))
 
 	return region
-
+	
+	
 def make_filter(radius):
 	"""
 	Make the filter for the blur.
