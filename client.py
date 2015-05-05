@@ -13,25 +13,39 @@ import depth_image
 __author__ = "Micah Brown and Jackson Spell"
 __email__ = "msbrown@davidson.edu, jaspell@davidson.edu"
 
+verbose = True
+
 def main():
 
-	depth_file = os.path.expanduser("~/Desktop/Images/DepthData/img_0005.yml")
-	color_file = os.path.expanduser("~/Desktop/Images/KinectColor/img_0004.png")
-	blackwhite_file = os.path.expanduser("~/Desktop/Images/RegisteredDepthData/img_0005_abs.png")
+	depth_file = os.path.expanduser("~/Desktop/Images/DepthData/img_0321.yml")
+	color_file = os.path.expanduser("~/Desktop/Images/KinectColor/img_0321.png")
+	blackwhite_file = os.path.expanduser("~/Desktop/Images/RegisteredDepthData/img_0000_abs.png")
 
-	test_file = "test1.png"
+	depth_test_file = "depth_test.png"
+	color_test_file = "color_test.png"
 
 	#original = color_image.ColorImage(color_file)
 	#original = color_image.ColorImage(width=20, height=100)
 
 	original = depth_image.DepthImage(depth_file)
-	original.write_to_file("original.png")
-	blurred = blur(original, 10)
-	blurred.write_to_file("blur.png")
+	color = color_image.ColorImage(color_file)
+	# original.write_to_file("original.png")
+	# blurred = blur(original, 10)
+	# blurred.write_to_file("blur.png")
 
 	#print len(original.image[0])
+
+	depth_threshold = 20
+	color_threshold = 100
+	radius = 8
+	scale = 20
+	border = 20
 	
-	laplacian_segment(original, 200, 10, 20).write_to_file(test_file)
+	laplacian_segment(original, depth_threshold, radius, scale, border).write_to_file(depth_test_file)
+	laplacian_segment(color, color_threshold, radius, scale, border).write_to_file(color_test_file)
+
+	if verbose:
+		print "Done."
 
 def gradient_segment(original, threshold):
 	"""
@@ -47,7 +61,7 @@ def gradient_segment(original, threshold):
 
 	pass
 
-def laplacian_segment(original, threshold, radius, scale):
+def laplacian_segment(original, threshold, radius, scale, border):
 	"""
 	Segment the depth image using the Laplacian technique.
 
@@ -56,20 +70,40 @@ def laplacian_segment(original, threshold, radius, scale):
 		threshold - int - 0 <= threshold < 256 - minimum value of edge between regions
 		radius - int - radius of blurring filter
 		scale - int - scaling factor for subtraction
+		border - int - > 0 - width of non-region border
 
 	Returns:
 		list of lists of tuples - segmented regions
 	"""
 
+	if verbose: 
+		print "Performing Laplacian segment..."
+
+	color = type(original) is color_image.ColorImage 
+
 	edged = edge_detect(original, radius, scale)
+
+	edged.write_to_file("edged.png")
 					
 	# Create 2D boolean array, setting borders and detected edges to True.
-	added = [[True if edged[i][j] > threshold 
-				   or i == 0 
-				   or i == original.height - 1 
-				   or j == 0 
-				   or j == original.width - 1 
-				   else False for j in range(original.width)] for i in range(original.height)]
+	if color:
+		added = [[True if (edged[i][j][0]+edged[i][j][1]+edged[i][j][2])/3.0 > threshold 
+					   or i <= border - 1
+					   or i >= original.height - border
+					   or j <= border - 1
+					   or j >= original.width - border
+					   else False for j in range(original.width)] for i in range(original.height)]
+
+	else:
+		added = [[True if edged[i][j] > threshold 
+					   or i <= border - 1
+					   or i >= original.height - border
+					   or j <= border - 1
+					   or j >= original.width - border
+					   else False for j in range(original.width)] for i in range(original.height)]
+
+	if verbose:
+		print "Grouping regions..."
 
 	regions = []
 
@@ -113,22 +147,22 @@ def create_segmented_image(regions, width, height):
 		ColorImage of segmented regions
 	"""
 
-	segmented_image = color_image.ColorImage(width=width, height=height) 
-	#print segmented_image
+	if verbose:
+		print "Coloring segmented image..."
+
+	segmented = color_image.ColorImage(width=width, height=height) 
 	
 	for region in regions:
 
-		#pick a random color for that entire region
-		rgb = [randint(0,255),randint(0,255),randint(0,255)]
+		# Pick a random color for that entire region.
+		rgb = (randint(0,255), randint(0,255), randint(0,255))
 
+		# Set every pixel in the region to that color.
 		for coord_tuple in region:
 
-			#Now go through and change the R, G, and B vals.
-			for i in range(0,3): 
-
-				segmented_image[coord_tuple[1]][3*coord_tuple[0]+i] = rgb[i]
+			segmented[coord_tuple[0]][coord_tuple[1]] = rgb
 														  
-	return segmented_image
+	return segmented
 
 def edge_detect(original, radius, scale):
 	"""
@@ -142,6 +176,9 @@ def edge_detect(original, radius, scale):
 	Returns:
 		ColorImage or DepthImage - edge-detected image
 	"""
+
+	if verbose:
+		print "Determining edges..."
 
 	color = type(original) is color_image.ColorImage
 

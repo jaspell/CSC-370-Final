@@ -46,7 +46,7 @@ class ColorImage(object):
 		Returns:
 		the list at index = key of the image.
 		"""
-		
+
 		return self.image[key]	
 
 	def read_image(self, image_file):
@@ -70,8 +70,6 @@ class ColorImage(object):
 			image = []
 			
 			for line in pixels:
-				
-				print line[0]
 				
 				row = []
 				for i in range(width):
