@@ -37,9 +37,9 @@ def main():
 
 	depth_threshold = 20
 	color_threshold = 100
-	radius = 8
+	radius = 10
 	scale = 20
-	border = 20
+	border = 25
 	
 	laplacian_segment(original, depth_threshold, radius, scale, border).write_to_file(depth_test_file)
 	laplacian_segment(color, color_threshold, radius, scale, border).write_to_file(color_test_file)
@@ -59,7 +59,18 @@ def gradient_segment(original, threshold):
 		list of lists of tuples - segmented regions
 	"""
 
-	pass
+	added = [[False for j in range(width)] for i in range(height)]
+
+	# Calculate normal vector for each pixel.
+	normals = [[0.0 for j in range(width)] for i in range(height)]
+	# CALCULATE NORMALS.  HOW DO WE DO IT?!?!?!
+
+	for i in range(original.height):
+		for j in range(original.width):
+			if not added[i][j]:
+				regions.append(group_region(added, i, j, normals, threshold))
+
+	return regions
 
 def laplacian_segment(original, threshold, radius, scale, border):
 	"""
@@ -113,6 +124,14 @@ def laplacian_segment(original, threshold, radius, scale, border):
 				regions.append(group_region(added, i, j))
 
 	return create_segmented_image(regions, original.width, original.height)
+
+def angle_between(normal1, normal2):
+	"""
+	Find the angle between the given normals.
+
+	Parameters:
+		normal1 - (float, float)
+	"""
 
 def blur(original, radius):
 	"""
@@ -233,14 +252,15 @@ def get_total_for_filter(radius):
 
 	return total
 
-def group_region(added, i, j):
+def group_region(added, i, j, normals=None, threshold=None):
 	"""
 	Group pixels into a region via floodfill for Laplacian segmentation.
 
 	Parameters:
-		added - 2D boolean list - whether the pixel at i,j has been added to a region
+		added - 2D boolean array - whether the pixel at i,j has been added to a region
 		i - int - height coordinate of starting pixel
 		j - int - width coordinate of starting pixel
+		normals - 2D float array - normal vector at pixel
 
 	Returns:
 		list of tuples - list of coordinate pairs for pixels in the region
@@ -255,18 +275,28 @@ def group_region(added, i, j):
 	while not q.empty():
 		x, y = q.get()
 
-		# Add edge-adjacent neighbors to the region if they have not been added.
-		for i in range(-1, 2):
+		if normals:
+			# Add edge-adjacent neighbors to the region if don't differ in normal too much.
+			for i in range(-1, 2):
 
-			if not added[x][y+i]:
-				q.put((x, y+i))
-				added[x][y+i] = True
-				region.append((x, y+i))
+				if not added[x][y+i] and angle_between(normals[x][y], normals[x][y+i]) < threshold:
 
-			if not added[x+i][y]:
-				q.put((x+i, y))
-				added[x+i][y] = True
-				region.append((x+i, y))
+
+				if not added[x+i][y] and angle_between(normals[x][y], normals[x+i][y]) < threshold:
+
+		else:
+			# Add edge-adjacent neighbors to the region if they have not been added.
+			for i in range(-1, 2):
+
+				if not added[x][y+i]:
+					q.put((x, y+i))
+					added[x][y+i] = True
+					region.append((x, y+i))
+
+				if not added[x+i][y]:
+					q.put((x+i, y))
+					added[x+i][y] = True
+					region.append((x+i, y))
 
 	return region
 
