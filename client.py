@@ -18,17 +18,17 @@ verbose = True
 def main():
 
 	depth_file = os.path.expanduser("~/Desktop/Images/DepthData/img_0814.yml")
-	color_file = os.path.expanduser("~/Desktop/Images/KinectColor/img_0842.png")
-	blackwhite_file = os.path.expanduser("~/Desktop/Images/RegisteredDepthData/img_0814_abs.png")
+	color_file = os.path.expanduser("~/Desktop/Images/KinectColor/img_0814.png")
+	# blackwhite_file = os.path.expanduser("~/Desktop/Images/RegisteredDepthData/img_0814_abs.png")
 
-	depth_test_file = "depth_test.png"
-	color_test_file = "color_test.png"
+	# depth_test_file = "depth_test.png"
+	# color_test_file = "color_test.png"
 
 	#original = color_image.ColorImage(color_file)
 	#original = color_image.ColorImage(width=20, height=100)
 
 	original = depth_image.DepthImage(depth_file)
-	color = color_image.ColorImage(color_file)
+	#color = color_image.ColorImage(color_file)
 	# original.write_to_file("original.png")
 	# blurred = blur(original, 10)
 	# blurred.write_to_file("blur.png")
@@ -36,23 +36,27 @@ def main():
 	#print len(original.image[0])
 
 
-	# depth_threshold = 5
+	depth_threshold = 4
 	# color_threshold = 10
-	# radius = 8
+	radius = 8
 
-	# scale = 20
-	border = 5
+	scale = 20
+	border = 10
 	
 	# laplacian_segment(color, color_threshold, radius, scale, border).write_to_file(color_test_file)
-	# laplacian_segment(original, depth_threshold, radius, scale, border).write_to_file(depth_test_file)
+	laplacian_segment(original, depth_threshold, radius, scale, 2*border).write_to_file("laplacian.png")
 
 	# Angle threshold is 60 deg.
-	threshold = 0.6
+	threshold = .6
 	max_jump = 10
 
-	gradient_segment(blur(original, 6), threshold, border, max_jump).write_to_file("blurred.png")
+	# image = gradient_segment(blur(original, 4), threshold, border, max_jump)
+	# image = cleanup(image, border)
+	# image.write_to_file("gradient_blur.png")
 
-	gradient_segment(original, threshold, border, max_jump).write_to_file("no_blur.png")
+	# image = gradient_segment(original, threshold, border, max_jump)
+	# image = cleanup(image, border)
+	# image.write_to_file("gradient_no_blur.png")
 
 	if verbose:
 		print "Done."
@@ -191,6 +195,27 @@ def blur(original, radius):
 
 	return blurred
 
+def cleanup(original, border):
+	"""
+	Remove black regions from image.
+
+	Parameters:
+		original - ColorImage - image to cleanup
+		border - int - width of border region to not clean
+
+	Returns:
+		ColorImage - cleaned image
+	"""
+
+	# Change the color of a black pixel to that of its left neighbor.
+	for i in range(border, original.height - border):
+		for j in range(border, original.width - border):
+
+			if original[i][j] == (0, 0, 0):
+				original[i][j] = original[i][j-1]
+
+	return original
+
 def create_segmented_image(regions, width, height):
 	"""
 	Create a ColorImage made from the segmented regions given.
@@ -316,6 +341,12 @@ def group_region(added, i, j, normals=None, original=None, threshold=None, max_j
 		if normals:
 			# Add edge-adjacent neighbors to the region if don't differ in normal too much.
 			for i in range(-1, 2):
+
+				if angle_between(normals[x][y], normals[x][y+i]) >= threshold:
+					added[x][y+i] = True
+
+				if angle_between(normals[x][y], normals[x+i][y]) >= threshold:
+					added[x+i][y] = True
 
 				if (not added[x][y+i] 
 					and angle_between(normals[x][y], normals[x][y+i]) < threshold
