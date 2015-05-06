@@ -17,9 +17,9 @@ verbose = True
 
 def main():
 
-	depth_file = os.path.expanduser("~/Desktop/Images/DepthData/img_0331.yml")
-	color_file = os.path.expanduser("~/Desktop/Images/KinectColor/img_0331.png")
-	blackwhite_file = os.path.expanduser("~/Desktop/Images/RegisteredDepthData/img_0000_abs.png")
+	depth_file = os.path.expanduser("~/Desktop/Images/DepthData/img_0814.yml")
+	color_file = os.path.expanduser("~/Desktop/Images/KinectColor/img_0842.png")
+	blackwhite_file = os.path.expanduser("~/Desktop/Images/RegisteredDepthData/img_0814_abs.png")
 
 	depth_test_file = "depth_test.png"
 	color_test_file = "color_test.png"
@@ -36,36 +36,44 @@ def main():
 	#print len(original.image[0])
 
 
-	depth_threshold = 5
-	color_threshold = 10
-	radius = 8
+	# depth_threshold = 5
+	# color_threshold = 10
+	# radius = 8
 
-	scale = 20
-	border = 25
+	# scale = 20
+	border = 5
 	
-	laplacian_segment(color, color_threshold, radius, scale, border).write_to_file(color_test_file)
-	laplacian_segment(original, depth_threshold, radius, scale, border).write_to_file(depth_test_file)
+	# laplacian_segment(color, color_threshold, radius, scale, border).write_to_file(color_test_file)
+	# laplacian_segment(original, depth_threshold, radius, scale, border).write_to_file(depth_test_file)
 
+	# Angle threshold is 60 deg.
+	threshold = 0.6
+	max_jump = 10
+
+	gradient_segment(blur(original, 6), threshold, border, max_jump).write_to_file("blurred.png")
+
+	gradient_segment(original, threshold, border, max_jump).write_to_file("no_blur.png")
 
 	if verbose:
 		print "Done."
 
-def gradient_segment(original, threshold):
+def gradient_segment(original, threshold, border, max_jump):
 	"""
 	Segment the depth image using the gradient technique.
 
 	Parameters:
 		original - DepthImage - depth image to be segmented
 		threshold - float - maximum angle between two pixels in the same region
+		border - int - > 0 - width of non-region border
 
 	Returns:
 		list of lists of tuples - segmented regions
 	"""
 
-	added = [[True if i == 0 
-				   or i == original.height - 1
-				   or j == 0
-				   or j == original.width - 1
+	added = [[True if i <= border - 1
+				   or i >= original.height - border
+				   or j <= border - 1
+				   or j >= original.width - border
 				   else False for j in range(original.width)] for i in range(original.height)]
 
 	# Calculate normal vector for each pixel.
@@ -84,9 +92,9 @@ def gradient_segment(original, threshold):
 	for i in range(original.height):
 		for j in range(original.width):
 			if not added[i][j]:
-				regions.append(group_region(added, i, j, normals, threshold))
+				regions.append(group_region(added, i, j, normals, original, threshold, max_jump))
 
-	return regions
+	return create_segmented_image(regions, original.width, original.height)
 
 def laplacian_segment(original, threshold, radius, scale, border):
 	"""
@@ -157,10 +165,11 @@ def angle_between(normal1, normal2):
 		float - angle between normal1 and normal2
 	"""
 	
+	#print math.cos(normal1[0]) * math.cos(normal2[0]) + math.sin(normal1[0]) * math.sin(normal2[0]) * math.cos(normal1[1] - normal2[1])
 
-	return math.acos(math.cos(normal1[0]) * math.cos(normal2[0]) + 
-					 math.sin(normal1[0]) * math.sin(normal2[0]) * 
-					 math.cos(normal1[1] - normal2[1]))
+	return math.acos(min(math.cos(normal1[0]) * math.cos(normal2[0]) + 
+						 math.sin(normal1[0]) * math.sin(normal2[0]) * 
+						 math.cos(normal1[1] - normal2[1]), 1.0))
 
 def blur(original, radius):
 	"""
@@ -281,7 +290,7 @@ def get_total_for_filter(radius):
 
 	return total
 
-def group_region(added, i, j, normals=None, threshold=None):
+def group_region(added, i, j, normals=None, original=None, threshold=None, max_jump=None):
 	"""
 	Group pixels into a region via floodfill for Laplacian segmentation.
 
@@ -308,12 +317,16 @@ def group_region(added, i, j, normals=None, threshold=None):
 			# Add edge-adjacent neighbors to the region if don't differ in normal too much.
 			for i in range(-1, 2):
 
-				if not added[x][y+i] and angle_between(normals[x][y], normals[x][y+i]) < threshold:
+				if (not added[x][y+i] 
+					and angle_between(normals[x][y], normals[x][y+i]) < threshold
+					and abs(original[x][y] - original[x][y+i]) < max_jump):
 					q.put((x, y+i))
 					added[x][y+i] = True
 					region.append((x, y+i))
 
-				if not added[x+i][y] and angle_between(normals[x][y], normals[x+i][y]) < threshold:
+				if (not added[x+i][y] 
+					and angle_between(normals[x][y], normals[x+i][y]) < threshold
+					and abs(original[x][y] - original[x+i][y]) < max_jump):
 					q.put((x+i, y))
 					added[x+i][y] = True
 					region.append((x+i, y))
