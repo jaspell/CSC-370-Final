@@ -1,8 +1,0 @@
-To Do:
-
-
-Code:
-Convert image to ppm
-Read in image
-Run algorithm
-Display segmented image and color side-by-side (or overlayed if possible)
