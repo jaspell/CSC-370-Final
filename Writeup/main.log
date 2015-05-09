@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  8 MAY 2015 21:47
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  9 MAY 2015 12:02
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -516,7 +516,7 @@ Underfull \hbox (badness 1546) in paragraph at lines 7--19
  []
 
 ) (./intro.tex
-Underfull \hbox (badness 10000) in paragraph at lines 7--16
+Underfull \hbox (badness 10000) in paragraph at lines 27--36
 
  []
 
@@ -525,23 +525,23 @@ Underfull \hbox (badness 10000) in paragraph at lines 5--15
 
  []
 
-) (./experiments.tex) (./results.tex) (./conclusion.tex) (./ack.tex)
+) (./experiments.tex) (./results.tex [1{/usr/local/texlive/2014/texmf-var/fonts
+/map/pdftex/updmap/pdftex.map}
+
+
+
+]) (./conclusion.tex) (./ack.tex)
 Underfull \hbox (badness 2707) in paragraph at lines 5--81
 \OT1/ppl/m/n/10 Thanks to Dr. Raghu Ra-manu-jan for guid-ance
  []
 
-(./main.bbl [1{/usr/local/texlive/2014/texmf-var/fonts/map/pdftex/updmap/pdftex
-.map}
-
-
-
-]) [2
+(./main.bbl) [2
 
 ] (./main.aux) ) 
 Here is how much of TeX's memory you used:
  4581 strings out of 493117
  62003 string characters out of 6135433
- 129440 words of memory out of 5000000
+ 130440 words of memory out of 5000000
  7880 multiletter control sequences out of 15000+600000
  23163 words of font info for 63 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -553,7 +553,7 @@ xlive/2014/texmf-dist/fonts/type1/urw/palatino/uplb8a.pfb></usr/local/texlive/2
 014/texmf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/local/texlive/2014/tex
 mf-dist/fonts/type1/urw/palatino/uplri8a.pfb></usr/local/texlive/2014/texmf-dis
 t/fonts/type1/urw/times/utmr8a.pfb>
-Output written on main.pdf (2 pages, 75181 bytes).
+Output written on main.pdf (2 pages, 76415 bytes).
 PDF statistics:
  36 PDF objects out of 1000 (max. 8388607)
  25 compressed objects within 1 object stream

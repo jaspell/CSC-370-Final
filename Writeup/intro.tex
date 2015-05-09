@@ -19,17 +19,26 @@ is represented as white and a point of minimum distance is represented
 as black. Accurate depth images were hard to construct until the
 invention of modern technologies. Notably, the Xbox Kinect sensor
 has the ability to simultaneously record depth images and color
-images, providing researchers easy access to rich depth data. 
+images, providing researchers easy access to rich depth data.\\
 
-In this section, you should introduce the reader to the problem you
-are attempting to solve. For example, for the first project: describe
-the $15$-puzzle, and why it's interesting as an A.I. problem. You
-should also cite and briefly describe other related papers that have
-tackled this problem in the past --- things that came up during the
-course of your research. In the AAAI style, citations look like
-\cite{aima} (see the comments in the source file \texttt{intro.tex} to
-see how this citation was produced). Conclude by summarizing how the
-remainder of the paper is organized. \\
+There are two main approaches for segmenting an image: edge-based
+segmentation and region-based segmentation \cite{aima}. Edge-based
+segmentation locates major discontinuities in the image, indicating
+separate distinguishable objects, whereas region-based segmentation
+identifies different surfaces within those objects by calculating the
+normal vectors at each point. The remainder of this paper will go over
+background information pertaining to the two methods of segmentation,
+describe our specific experimental design, and share our results. 
+
+% In this section, you should introduce the reader to the problem you
+% are attempting to solve. For example, for the first project: describe
+% the $15$-puzzle, and why it's interesting as an A.I. problem. You
+% should also cite and briefly describe other related papers that have
+% tackled this problem in the past --- things that came up during the
+% course of your research. In the AAAI style, citations look like
+% \cite{aima} (see the comments in the source file \texttt{intro.tex} to
+% see how this citation was produced). Conclude by summarizing how the
+% remainder of the paper is organized. \\
 
 % Citations: As you can see above, you create a citation by using the
 % \cite{} command. Inside the braces, you provide a "key" that is
