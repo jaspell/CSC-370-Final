@@ -4,11 +4,27 @@
 
 \subsection{Laplacian Edge Detection}
 \label{subsec:laplacian}
-Background information on L.E.D. goes here.
+Edge detection attempts to distinguish solid objects in an image. This
+method of segmentation relies on the fact that edges of an image will
+have large discontinuities in the data. In color images, two different
+objects often have very different luminosities, colors, or
+brightnesses; edge detection locates the areas where the pixels
+experience a rapid change in those values. While pixels in RGB images
+have these various characteristics, depth image pixels only have one
+piece of data (the depth). Thus, edge detection in depth images
+locates objects in an image by finding the areas in which the depth
+data rapidly changes. 
+
+To find this area, a Gaussian blur convolution is first applied to the
+depth image. Then, the blurred image, $image_{blur}$, is subtracted
+from the original image, $image_{original}$, resulting in the
+``edged'' image, $image_{edged}$. Areas with similar values are
+relatively unchanged after the blur, and result in low values in
+$image_{edged}$. However, the areas    
 
 \subsection{Gradient Surface Detection}
 \label{subsec:gradient}
-Background informatin on G.S.D. goes here.
+Background information on G.S.D. goes here.
 
 % Describe any background information that the reader would need to know
 % to understand your work. You do not have to explain algorithms or
