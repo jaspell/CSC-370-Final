@@ -1,5 +1,12 @@
 \begin{thebibliography}{}
 
+\bibitem[\protect\citeauthoryear{Marr and Hildreth}{1980}]{marr}
+Marr, D., and Hildreth, E.
+\newblock 1980.
+\newblock Theory of edge detection.
+\newblock {\em Proceedings of the Royal Society of London. Series B, Biological
+  Sciences} 207(1167):pp. 187--217.
+
 \bibitem[\protect\citeauthoryear{Russell and Norvig}{2003}]{aima}
 Russell, S.~J., and Norvig, P.
 \newblock 2003.

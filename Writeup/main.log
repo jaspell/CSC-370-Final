@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  9 MAY 2015 16:55
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  9 MAY 2015 17:17
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -548,10 +548,10 @@ Underfull \hbox (badness 2707) in paragraph at lines 5--81
 
 ] (./main.aux) ) 
 Here is how much of TeX's memory you used:
- 4591 strings out of 493117
- 62122 string characters out of 6135433
- 130456 words of memory out of 5000000
- 7885 multiletter control sequences out of 15000+600000
+ 4592 strings out of 493117
+ 62128 string characters out of 6135433
+ 130484 words of memory out of 5000000
+ 7886 multiletter control sequences out of 15000+600000
  27331 words of font info for 70 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  38i,12n,24p,796b,334s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -563,7 +563,7 @@ xlive/2014/texmf-dist/fonts/type1/urw/palatino/uplb8a.pfb></usr/local/texlive/2
 mf-dist/fonts/type1/urw/palatino/uplri8a.pfb></usr/local/texlive/2014/texmf-dis
 t/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2014/texmf-dist/fonts/ty
 pe1/urw/times/utmri8a.pfb>
-Output written on main.pdf (2 pages, 83230 bytes).
+Output written on main.pdf (2 pages, 86545 bytes).
 PDF statistics:
  40 PDF objects out of 1000 (max. 8388607)
  28 compressed objects within 1 object stream
