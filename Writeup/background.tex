@@ -21,11 +21,24 @@ applied to the depth image. Then, the blurred image, $image_{blur}$,
 is subtracted from the original image, $image_{original}$, resulting
 in the ``edged'' image, $image_{edged}$. Areas with similar values are
 relatively unchanged after the blur, and result in low values in
-$image_{edged}$. However, the areas    
+$image_{edged}$. However, the areas of a depth image with large
+differences in values have a larger difference represented in
+$image_{edged}$. When rendered, the $image_{edged}$ is dark in
+continuous areas of the depth image. However, in places with
+significant discontinuities, the $image_{edged}$ will have bright
+edges on those boundaries.
 
 \subsection{Gradient Surface Detection}
 \label{subsec:gradient}
 Background information on G.S.D. goes here.
+
+$\varphi or \phi  = \tan^{-1}{(\frac{d_1-d_2}{2})}$
+
+$\vartheta or \theta = ...$
+
+$\psi = \cos^{-1}{(\cos{\theta_1}\cos{\theta_2} + \sin{\theta_1}\sin{\theta_2}\cos{(\theta_1-\theta_2)})}$
+
+
 
 % Describe any background information that the reader would need to know
 % to understand your work. You do not have to explain algorithms or
