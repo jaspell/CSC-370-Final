@@ -6,29 +6,27 @@
 Image processing is a vital component of computer vision and
 artificial intelligence. Within image processing, image segmentation
 continues to be a focus of research as machines are expected to be
-able to have similar visual abilities as humans. Image segmentation
-divides an image into regions of similar characteristics, which
-ultimately can lead to object recognition. 
+able to have similar visual abilities as humans. Segmentation 
+groups pixels into regions of similar characteristics, which can be used
+for automated analysis, tracking, and object recognition.  Many image segmentation techniques function on color images, grouping pixels by color or perceived luminosity.  We explore an alternative - segmentation of depth images.
 
-Depth images contain information about the distance a point in space
-is to the camera eye. Whereas traditional RGB images contain a matrix
-of pixels, each containing a red, green, and blue value, a depth image
+Depth images contain information about the distance from a point in space to the camera sensor. Whereas traditional RGB images contain a matrix
+of color pixels, each containing a red, green, and blue value, a depth image
 only contains a matrix of depth values. Depth images can be visually
-rendered as black and white images, where a point of maximum distance
+rendered in greyscale, where a point of maximum distance
 is represented as white and a point of minimum distance is represented
-as black. Accurate depth images were hard to construct until the
-invention of modern technologies. Notably, the Microsoft Xbox Kinect
+as black. The construction of accurate depth images relies heavily on recent technology, including LIDAR and infrared sensors.  Notably, the Microsoft Xbox Kinect
 sensor has the ability to simultaneously record depth images and color
-images, providing researchers easy access to rich depth data.\\
+images, providing researchers easy access to rich depth data.
 
-There are two main approaches for segmenting an image: edge-based
+There are two fundamental approaches for segmenting an image: edge-based
 segmentation and region-based segmentation \cite{aima}. Edge-based
 segmentation locates major discontinuities in the image, indicating
-separate distinguishable objects, whereas region-based segmentation
+separate distinguishable objects, whereas the region-based segmentation
 identifies different surfaces within those objects by calculating the
-normal vectors at each point. The remainder of this paper will go over
-background information pertaining to the two methods of segmentation,
-describe our specific experimental design, and share our results. 
+normal vectors at each point. The remainder of this paper covers
+background information pertaining to the two methods of segmentation used,
+describes our specific experimental design, and shares our results. 
 
 % In this section, you should introduce the reader to the problem you
 % are attempting to solve. For example, for the first project: describe

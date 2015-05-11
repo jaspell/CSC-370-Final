@@ -7,6 +7,14 @@ Marr, D., and Hildreth, E.
 \newblock {\em Proceedings of the Royal Society of London. Series B, Biological
   Sciences} 207(1167):pp. 187--217.
 
+\bibitem[\protect\citeauthoryear{Pulli and Pietik{\"a}inen}{1993}]{pulli}
+Pulli, K., and Pietik{\"a}inen, M.
+\newblock 1993.
+\newblock Range image segmentation based on decomposition of surface normals.
+\newblock In {\em Proceedings of the Scandinavian conference on image
+  analysis}, volume~2,  893--893.
+\newblock PROCEEDINGS PUBLISHED BY VARIOUS PUBLISHERS.
+
 \bibitem[\protect\citeauthoryear{Russell and Norvig}{2003}]{aima}
 Russell, S.~J., and Norvig, P.
 \newblock 2003.

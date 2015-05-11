@@ -4,33 +4,25 @@
 
 \subsection{Laplacian Edge Detection}
 \label{subsec:laplacian}
-Edge detection attempts to distinguish solid objects in an image. This
-method of segmentation relies on the fact that edges of an image will
-have large discontinuities in the data. In color images, two different
+Edge detection distinguishes transitions between pixels by locating large discontinuities in the data of adjacent pixels. In color images, two different
 objects often have very different luminosities, colors, or
-brightnesses; edge detection locates the areas where the pixels
+patterns; edge detection locates the areas where the pixels
 experience a rapid change in those values. While pixels in RGB images
-have these various characteristics, depth image pixels only have one
+have various characteristics, depth image pixels only have one
 piece of data (the depth). Thus, edge detection in depth images
 locates objects in an image by finding the areas in which the depth
-data rapidly changes. 
+data rapidly changes, known as jump discontinuities. 
 
-To find edges in depth images, the Marr-Hildreth algorithm can be
-applied \cite{marr}. To do so, a Gaussian blur convolution is first
-applied to the depth image. Then, the blurred image, $image_{blur}$,
-is subtracted from the original image, $image_{original}$, resulting
-in the ``edged'' image, $image_{edged}$. Areas with similar values are
-relatively unchanged after the blur, and result in low values in
-$image_{edged}$. However, the areas of a depth image with large
-differences in values have a larger difference represented in
-$image_{edged}$. When rendered, the $image_{edged}$ is dark in
-continuous areas of the depth image. However, in places with
-significant discontinuities, the $image_{edged}$ will have bright
-edges on those boundaries.
+The Marr-Hildreth algorithm is one of the simplest forms of edge detection \cite{marr}. A Gaussian blur convolution is applied to the depth image. The blurred image is subtracted from the original image, resulting
+in an "edged" image. Areas with similar values across pixels are
+relatively unchanged after the blur.   The difference between the original image and the blurred image is therefore small over that area, resulting in small values at that location in the edged image. In contrast, areas with large
+differences in values appear significantly different in the blurred image, and as such have large values at that location in the edged image. When rendered in color, the edged image is dark in continuous areas of the depth image but bright in areas with significant discontinuities. 
 
 \subsection{Gradient Surface Detection}
 \label{subsec:gradient}
-Background information on G.S.D. goes here.
+While the Marr-Hildreth algorithm behaves similarly on both color and depth images, it does not take advantage of the different data provided by a depth image.  The distance values in a depth image give a pixelated 3D view from a single vantage point, providing volumetric information about the scene.  This information is especially valuable when attempting to segment surfaces.
+
+Pulli and Pietik{\"a}inen explore several sophisticated approaches in their discussion of depth image segmentation, including fitting continuous differentiable functions, robust estimators, and least squares approximations to the surfaces \cite{pulli}.  We take a simpler and faster approach, evaluating local normal vectors for each pixel and grouping pixels into surfaces if the normals are sufficiently continuous.  
 
 $\varphi or \phi  = \tan^{-1}{(\frac{d_1-d_2}{2})}$
 
