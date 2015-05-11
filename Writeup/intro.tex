@@ -5,12 +5,11 @@
 \label{sec:intro}
 Image processing is a vital component of computer vision and
 artificial intelligence. Within image processing, image segmentation
-continues to be a focus of research as machines are expected to be
-able to have similar visual abilities as humans. Segmentation 
+continues to be a focus of research as machines are developed to have similar visual abilities to humans. Segmentation 
 groups pixels into regions of similar characteristics, which can be used
-for automated analysis, tracking, and object recognition.  Many image segmentation techniques function on color images, grouping pixels by color or perceived luminosity.  We explore an alternative - segmentation of depth images.
+for automated analysis, tracking, and object recognition.  Many image segmentation techniques operate on color images, grouping pixels by color or perceived luminosity.  We explore an alternative: segmentation of depth images.
 
-Depth images contain information about the distance from a point in space to the camera sensor. Whereas traditional RGB images contain a matrix
+Depth images contain information about the distance from a point in space to the camera sensor. While traditional RGB images contain a matrix
 of color pixels, each containing a red, green, and blue value, a depth image
 only contains a matrix of depth values. Depth images can be visually
 rendered in greyscale, where a point of maximum distance
@@ -19,16 +18,16 @@ as black. The construction of accurate depth images relies heavily on recent tec
 sensor has the ability to simultaneously record depth images and color
 images, providing researchers easy access to rich depth data.
 
-The algorithms presented below were tested and tuned using data taken using an Xbox Kinect sensor by a collaboration between UC Berkeley and the Max Planck Institute for Informatics in their work on category-level object recognition \cite{kinect}.  As such, it presents an imperfect source of realistic, often cluttered scenes, perfect for useful algorithm development.
+The algorithms presented below were tested and tuned using data taken by an Xbox Kinect sensor by a team from UC Berkeley and the Max Planck Institute for Informatics in their work on category-level object recognition \cite{kinect}.  As such, it presents an imperfect source of realistic, often cluttered scenes, perfect for useful algorithm development.
 
 There are two fundamental approaches for segmenting an image: edge-based
 segmentation and region-based segmentation \cite{aima}. Edge-based
 segmentation locates major discontinuities in the image, indicating
-separate distinguishable objects, whereas the region-based segmentation
+separate distinguishable objects, whereas region-based segmentation
 identifies different surfaces within those objects by calculating the
 normal vectors at each point. The remainder of this paper covers
 background information pertaining to the two methods of segmentation used,
-describes our specific experimental design, and shares our results. 
+describes our specific experimental design, and shares our results and conclusions. 
 
 % In this section, you should introduce the reader to the problem you
 % are attempting to solve. For example, for the first project: describe

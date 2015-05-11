@@ -17,12 +17,12 @@
         \caption{Edged}
         \label{fig:814:edged}
     \end{subfigure}
-    \caption{Edge detection of a doorway and nearby fridge and countertop by the Marr-Hildreth algorithm.}
+    \caption{Edge detection of a doorway and nearby fridge and countertop using the Marr-Hildreth algorithm.}
 \end{figure*}
 
-\subsection{Laplacian Edge Detection}
+\subsection{Laplacian Edge Detection (LED)}
 \label{subsec:laplacian}
-Edge detection distinguishes transitions between pixels by locating large discontinuities in the data of adjacent pixels. In color images, two different
+Edge detection distinguishes edges between pixels by locating large discontinuities in the data of adjacent pixels. In color images, two different
 objects often have very different luminosities, colors, or
 patterns; edge detection locates the areas where the pixels
 experience a rapid change in those values. While pixels in RGB images
@@ -32,17 +32,17 @@ locates objects in an image by finding the areas in which the depth
 data rapidly changes, known as jump discontinuities. 
 
 The Marr-Hildreth algorithm is one of the simplest forms of edge detection \cite{marr}. A Gaussian blur convolution is applied to the depth image. The blurred image is subtracted from the original image, resulting
-in an "edged" image. Areas with similar values across pixels are
+in an "edged" image, such as in Fig.~\ref{fig:814:edged}. Areas with similar values across pixels are
 relatively unchanged after the blur.   The difference between the original image and the blurred image is therefore small over that area, resulting in small values at that location in the edged image. In contrast, areas with large
 differences in values appear significantly different in the blurred image, and as such have large values at that location in the edged image. When rendered in color, the edged image is dark in continuous areas of the depth image but bright in areas with significant discontinuities. 
 
-It should be noted that the Marr-Hildreth algorithm defines edges, but does not group the pixels within those edges.  That is left to a simple flood-fill algorithm.
+It should be noted that the Marr-Hildreth algorithm defines edges, but does not group the pixels within those edges.  Grouping of pixels is left to a simple flood-fill algorithm.
 
-\subsection{Gradient Surface Detection}
+\subsection{Gradient Surface Detection (GSD)}
 \label{subsec:gradient}
 While the Marr-Hildreth algorithm behaves similarly on both color and depth images, it does not take advantage of the different data provided by a depth image.  The distance values in a depth image give a pixelated 3D view from a single vantage point, providing volumetric information about the scene.  This information is especially valuable when attempting to segment surfaces.
 
-Pulli and Pietik{\"a}inen explore several sophisticated approaches in their discussion of depth image segmentation, including fitting continuous differentiable functions, robust estimators, and least squares approximations to the surfaces \cite{pulli}.  We take a simpler and faster approach, evaluating local normal vectors for each pixel and grouping pixels into surfaces if the normals are sufficiently continuous.  
+Pulli and Pietik{\"a}inen explore several sophisticated approaches in their discussion of depth image segmentation, including fitting continuous differentiable functions, robust estimators, and least squares approximations to the surfaces \cite{pulli}.  We take a simpler and faster approach, evaluating normal vectors for each pixel, which acts as a local partial derivative, and grouping pixels into surfaces if the normals are sufficiently continuous.  
 
 % Describe any background information that the reader would need to know
 % to understand your work. You do not have to explain algorithms or

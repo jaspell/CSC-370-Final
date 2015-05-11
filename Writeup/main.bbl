@@ -1,5 +1,13 @@
 \begin{thebibliography}{}
 
+\bibitem[\protect\citeauthoryear{Janoch \bgroup et al\mbox.\egroup
+  }{2011}]{kinect}
+Janoch, A.; Karayev, S.; Jia, Y.; Barron, J.~T.; Fritz, M.; Saenko, K.; and
+  Darrell, T.
+\newblock 2011.
+\newblock A category-level 3-d object dataset: Putting the kinect to work.
+\newblock In {\em ICCV Workshop on Consumer Depth Cameras for Computer Vision}.
+
 \bibitem[\protect\citeauthoryear{Marr and Hildreth}{1980}]{marr}
 Marr, D., and Hildreth, E.
 \newblock 1980.

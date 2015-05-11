@@ -2,27 +2,26 @@
 \section{Algorithms}
 \label{sec:expts}
 
-Our research sought to determine whether the Laplacian Edge Detection method or the Gradient Surface Detection method would produce better segmentation on depth images. Our detailed algorithms are outlined below in Alg.~\ref{laplacian} and Alg.~\ref{gradient}. In Laplacian Edge Detection, a convolution matrix was built with a $radius = 4$ and $\sigma = 1$, which we found resulted in a smooth blur. We used a threshold of 4 to determined whether an edge had been located. Using a low threshold resulted in well defined edges but presented several false artifacts as an unintended side-effect. Once the edges have been identified, a simple flood-fill algorithm fills in objects that are completely defined by edges.  
+Our research sought to determine whether LED or GSD would produce better segmentation on depth images. Our algorithms are outlined below in Alg.~\ref{laplacian} and Alg.~\ref{gradient}. In LED, we found that a convolution matrix with a radius of 4 pixels and $\sigma = 1$ resulted in a smooth blur for the majority of our dataset. For Fig.~\ref{fig:original:depth}, we found a difference threshold of 4 cm was an accurate measure of edges. Using a low threshold resulted in well defined edges but presented several false artifacts as an unintended side-effect. Once the edges have been identified, a simple flood-fill algorithm fills in objects that are completely defined by edges.  
 
 \begin{algorithm}
 \caption{Laplacian Edge Detection (Image $depth$)}\label{laplacian}
 \begin{algorithmic}[1]
 \State Image $segmented \gets$ \textbf{new} Image
 \State Image  $blur \gets$ \textbf{new} Image
-\State $blur \gets $ \Call{GaussianBlur}{Horizontal, $depth$}
-\State $blur \gets $ \Call{GaussianBlur}{Vertical, $blur$}
-\For{$i$ \textbf{in} $length$, $j$ \textbf{in} $height$}
-\State $segmented_{i, j} \gets (original_{i, j}-blur_{i, j}$)
-\If {$segmented_{i,j} > threshold$}
-\State \textbf{label} $segmented_{i,j}$ Edge
+\State $blur \gets $ \Call{GaussianBlur}{$depth$}
+\For {Pixel $p$ \textbf{in} $depth$}
+\State $segmented_{p} \gets (original_{p}-blur_{p}$)
+\If {$segmented_{p} > threshold$}
+\State \textbf{label} $segmented_{p}$ \textbf{as} Edge
 \EndIf
 \EndFor
 \item[]
 \For{Pixel $p$ \textbf{in} $segmented$}
-\If {$p$ \textbf{is not} visited}
-\State $region \gets$ \Call{FloodFill}{$p$} 
+\If {$p$ \textbf{is not} Visited \textbf{and} $p$ \textbf{is not} Edge}
+\State List $region \gets$ \Call{FloodFill}{$p$} 
 \For{Pixel $q$ \textbf{in} $region$}
-\State \textbf{label} $q$ visited
+\State \textbf{label} $q$ \textbf{as} Visited
 \EndFor
 \EndIf
 \EndFor
@@ -30,36 +29,43 @@ Our research sought to determine whether the Laplacian Edge Detection method or 
 \end{algorithmic}
 \end{algorithm}
 
-Gradient Surface Detection relies on accurate calculations of the surface normals. First, the gradient is calculated in the horizontal direction by taking the difference of the two depths on either side of the pixel. This gradient, $\Delta$horizontal, represents the vector of the surface in the horizontal direction. Then the value of the angle of this vector is found by: 
-\begin{equation}\label{theta}\theta = \tan^{-1}{(\frac{p_{i+1,j}-p_{i-1,j}}{2})} \end{equation}
-Similarly, the angle of the vertical gradient, $\Delta$vertical, is found by:
-\begin{equation}\label{phi}\theta = \tan^{-1}{(\frac{p_{i,j+1}-p_{i,j-1}}{2})} \end{equation}
-Now, using \eqref{theta} and \eqref{phi}, we calculate the normal vector to both of those vectors as:
+Gradient Surface Detection relies on accurate calculations of the surface normals. First, the gradient is calculated in the horizontal direction by taking the difference of the two depths on either side of the pixel. This gradient, $\Delta horizontal$, represents the vector of the surface in the horizontal direction. The value of the angle of this vector is found by: 
+\begin{equation}\label{theta}\theta_1 = \tan^{-1}{(\frac{\Delta horizontal}{2})} \end{equation}
+Similarly, the angle of the vertical gradient, $\Delta vertical$, is found by:
+\begin{equation}\label{phi}\theta_2 = \tan^{-1}{(\frac{\Delta vertical}{2})} \end{equation}
+Now, using Eqs. \eqref{theta} and \eqref{phi}, we calculate the normal vector to both of those vectors as:
 \begin{equation}\label{psi}\psi = \cos^{-1}{(\cos{\theta_1}\cos{\theta_2} + \sin{\theta_1}\sin{\theta_2}\cos{(\theta_1-\theta_2)})} \end{equation}
-In particular, $\psi$ is derived from the spherical law of cosines. For this algorithm, a threshold of .6 (radians) was used to determine whether one surface normal differed greatly from another. A "maximum jump" parameter was added to solve the case of two normals being adjacent (due to perspective) in a depth image, despite them being far away from each other. For example, a depth image of an open doorway may have the walls surrounding the door at a normal pointing directly at the eye, and the normals of the wall that is through the open door pointing the same direction. These are two distinct surfaces that ideally this algorithm could detect, yet their normals are identical. By setting $max_jump =  10$, we are saying that if adjacent pixels differ by more than $10$ centimeters, they cannot be on the same surface.
-
-
+$\psi$ is derived from the spherical law of cosines. For Fig.~\ref{fig:original:depth}, a threshold of 35 degrees was used to determine whether one surface normal differed significantly from another. A "maximum jump" parameter was added to solve the case of two similar normals adjacent (due to perspective) in a depth image, despite being physically far away from each other. For example, a depth image of an open doorway, such as in Fig.~\ref{fig:814:depth}, may have adjacent pixels on the edge of the doorway; a pixel on the near wall could have a similar normal vector as one through the doorway on the far wall. These are two distinct surfaces that GSD would ideally separate, yet their normals are identical. By setting $max\_jump =  10$, pixels differing by more than $10$ centimeters cannot be part of the same surface.
 
 \begin{algorithm}
 \caption{Gradient Surface Detection (Image $depth$)}\label{gradient}
 \begin{algorithmic}[1]
+\State Image $segmented \gets$ \textbf{new} Image
 \For{Pixel $p$ \textbf{in} $depth$}
-\State $p_{norm} \gets$ Normal($p$) 
+\State $p_{norm} \gets$ \Call{Normal}{$p$} 
 \EndFor
+\State List $regions \gets$ \textbf{new} List
 \For{Pixel $p$ \textbf{in} $depth$}
 \If{$p$ \textbf{not} visited}
-\State \textbf{label} $p$ visited
-\State $region \gets \Call{Regionify}{p, region}$
+\State \textbf{label} $p$ \textbf{as} Visited
+\State List $region \gets \Call{Regionify}{p, region}$
 \EndIf
+\State \textbf{append} $regions$ \textbf{with} $region$
 \EndFor
+\For{$region$ \textbf{in} $regions$}
+\For{Pixel $p$ \textbf{in} $region$}
+\State \textbf{label} $segmented_p$ \textbf{as} $region$
+\EndFor
+\EndFor
+\State \Return $segmented$
 \item[]
 \Procedure{Regionify}{Pixel $p$, List $region$}
-\For{Pixel $q$ in Neighbors($p$)}
-\If{$q$ \textbf{not} visited \textbf{and} 
-\Statex[4] Angle($p_{norm}$, $q_{norm}$) $<threshold$ \textbf{and} 
+\For{Pixel $q$ in \Call{Neighbors}{$p$}}
+\If{$q$ \textbf{not} Visited \textbf{and} 
+\Statex[4] \Call{Angle}{$p_{norm}, q_{norm}$} $<threshold$ \textbf{and} 
 \Statex[4] $|p-q|<max\_jump$}
-\State Append $region$ \textbf{with} $q$
-\State \textbf{label} $q$ visited
+\State \textbf{append} $region$ \textbf{with} $q$
+\State \textbf{label} $q$ \textbf{as} Visited
 \State \Call{Regionify}{$q,region$}
 \EndIf
 \EndFor
