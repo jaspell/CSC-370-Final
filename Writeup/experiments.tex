@@ -9,3 +9,27 @@ were you measuring? You should justify these choices when
 necessary. The accepted wisdom is that there should be enough detail
 in this section that I could reproduce your work \emph{exactly} if I
 were so motivated.
+\begin{algorithm}
+\caption{Laplacian Edge Detection}\label{laplacian}
+\begin{algorithmic}[1]
+\State Image $segmented \gets$ \textbf{new} Image
+\State Image  $blur \gets$ \textbf{new} Image
+\State $blur \gets $ GaussianBlur(Horizontal, $original$)
+\State $blur \gets $ GaussianBlur(Vertical, $blur$)
+\For{$i$ \textbf{in} $length$, $j$ \textbf{in} $height$}
+\State $segmented_{i, j} \gets (original_{i, j}-blur_{i, j}$)
+\If {$segmented_{i,j} > threshold$}
+\State $segmented_{i,j} \gets EDGE$
+\EndIf
+\EndFor
+\State
+\For{Pixel $p$ \textbf{in} $segmented$}
+\If {$p$ \textbf{is not} visited}
+\State $region \gets$ FloodFill($p$) 
+\For{Pixel $q$ \textbf{in} $region$}
+\State \textbf{label} $q$ visited
+\EndFor
+\EndIf
+\EndFor
+\end{algorithmic}
+\end{algorithm}
