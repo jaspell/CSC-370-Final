@@ -47,6 +47,14 @@
 \setcounter{secnumdepth}{1}
 \nocopyright
 
+\makeatletter
+\let\OldStatex\Statex
+\renewcommand{\Statex}[1][3]{%
+  \setlength\@tempdima{\algorithmicindent}%
+  \OldStatex\hskip\dimexpr#1\@tempdima\relax}
+\makeatother
+
+
 % Fill in your paper title, names and emails below
 % The "\\" is used to break lines. The \url command
 % is useful for typesetting URLs and email addresses (it uses the
