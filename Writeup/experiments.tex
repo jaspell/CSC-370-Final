@@ -10,11 +10,11 @@ necessary. The accepted wisdom is that there should be enough detail
 in this section that I could reproduce your work \emph{exactly} if I
 were so motivated.
 \begin{algorithm}
-\caption{Laplacian Edge Detection}\label{laplacian}
+\caption{Laplacian Edge Detection (Image $depth$)}\label{laplacian}
 \begin{algorithmic}[1]
 \State Image $segmented \gets$ \textbf{new} Image
 \State Image  $blur \gets$ \textbf{new} Image
-\State $blur \gets $ GaussianBlur(Horizontal, $original$)
+\State $blur \gets $ GaussianBlur(Horizontal, $depth$)
 \State $blur \gets $ GaussianBlur(Vertical, $blur$)
 \For{$i$ \textbf{in} $length$, $j$ \textbf{in} $height$}
 \State $segmented_{i, j} \gets (original_{i, j}-blur_{i, j}$)
@@ -22,7 +22,7 @@ were so motivated.
 \State $segmented_{i,j} \gets EDGE$
 \EndIf
 \EndFor
-\State
+\item[]
 \For{Pixel $p$ \textbf{in} $segmented$}
 \If {$p$ \textbf{is not} visited}
 \State $region \gets$ FloodFill($p$) 
@@ -31,5 +31,33 @@ were so motivated.
 \EndFor
 \EndIf
 \EndFor
+\State \Return{$segmented$}
+\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}
+\caption{Gradient Surface Detection (Image $depth$)}\label{gradient}
+\begin{algorithmic}[1]
+\For{Pixel $p$ \textbf{in} $depth$}
+\State $p_{normal} \gets$ Normal($p$) 
+\EndFor
+\For{Pixel $p$ \textbf{in} $depth$}
+\If{$p$ \textbf{not} visited}
+\State \textbf{label} $p$ visited
+\State $region \gets$ \textbf{new} List
+\State$Regionify(p, region)$
+\EndIf
+\EndFor
+\item[]
+\Procedure{Regionify}{Pixel $p$, List $region$}
+\For{Pixel $q$ in Neighbors($p$)}
+\If{$q$ \textbf{not} visited \textbf{and} Angle($p$,$q$) $<threshold$ \textbf{and} $|p-q|<max\_jump$}
+\State Append $region$ \textbf{with} $q$
+\State \textbf{label} $q$ visited
+\State $Regionify(q, region)$
+\EndIf
+\EndFor
+\EndProcedure
 \end{algorithmic}
 \end{algorithm}
