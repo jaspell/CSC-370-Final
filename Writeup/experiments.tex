@@ -2,7 +2,7 @@
 \section{Algorithms}
 \label{sec:expts}
 
-Our research sought to determine whether the Laplacian Edge Detection method or the Gradient Surface Detection method would produce more better segmentation on depth images. Our detailed algorithms are outlined below in Alg.~\ref{laplacian} and Alg.~\ref{gradient}. In Laplacian Edge Detection, a convolution matrix was built with a $radius = 8$ and $\sigma = \frac{7}{3}$, which we found resulted in a smooth blur. We used a threshold of 4 to determined whether an edge had been located. Using a low threshold resulted in well defined edges but presented several false artifacts as an unintended side-effect.
+Our research sought to determine whether the Laplacian Edge Detection method or the Gradient Surface Detection method would produce better segmentation on depth images. Our detailed algorithms are outlined below in Alg.~\ref{laplacian} and Alg.~\ref{gradient}. In Laplacian Edge Detection, a convolution matrix was built with a $radius = 4$ and $\sigma = 1$, which we found resulted in a smooth blur. We used a threshold of 4 to determined whether an edge had been located. Using a low threshold resulted in well defined edges but presented several false artifacts as an unintended side-effect. Once the edges have been identified, a simple flood-fill algorithm fills in objects that are completely defined by edges.  
 
 \begin{algorithm}
 \caption{Laplacian Edge Detection (Image $depth$)}\label{laplacian}
@@ -30,7 +30,7 @@ Our research sought to determine whether the Laplacian Edge Detection method or 
 \end{algorithmic}
 \end{algorithm}
 
-Gradient Surface Detection relies on accurate calculations of the surface normals. First, the gradient is calculated in the horizontal direction by taking the difference of the two depths on either side of the pixel. This gradient, $\Delta$horizontal, represents the horizontal vector of the surface. Then the value of the angle of this vector is found by: 
+Gradient Surface Detection relies on accurate calculations of the surface normals. First, the gradient is calculated in the horizontal direction by taking the difference of the two depths on either side of the pixel. This gradient, $\Delta$horizontal, represents the vector of the surface in the horizontal direction. Then the value of the angle of this vector is found by: 
 \begin{equation}\label{theta}\theta = \tan^{-1}{(\frac{p_{i+1,j}-p_{i-1,j}}{2})} \end{equation}
 Similarly, the angle of the vertical gradient, $\Delta$vertical, is found by:
 \begin{equation}\label{phi}\theta = \tan^{-1}{(\frac{p_{i,j+1}-p_{i,j-1}}{2})} \end{equation}
